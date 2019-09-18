@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		
+	</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="assets/style/style.css">
+
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type = "text/javascript">
+	
+
+const menuComponents=[
+	{
+		text: 'Action',
+		hrefLink:'https://ru.wikipedia.org',
+		linkClass: 'firstMenuLevel',
+		parentClass:'mainMenu'
+	},
+	{
+		text: 'Another action',
+		hrefLink:'https://ru.wikipedia.org',
+		linkClass: 'firstMenuLevel',
+		parentClass:'mainMenu'
+	},
+	{
+		text: 'Submenu',
+		hrefLink:'#',
+		linkClass: 'firstMenuLevel',
+		parentClass:'mainMenu',
+		childrenItems:[
+			{
+				text: 'Submenu action',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			},
+			{
+				text: 'Another submenu action',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			},
+			{
+				text: 'Subsubmenu',
+				hrefLink:'#',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel',
+				childrenItems:[
+					{
+						text: 'action1',
+						hrefLink:'https://ru.wikipedia.org',
+						linkClass: 'ThirdMenuLevel',
+						parentClass:'SecondMenuLevel'
+					},
+					{
+						text: 'action2',
+						hrefLink:'https://ru.wikipedia.org',
+						linkClass: 'ThirdMenuLevel',
+						parentClass:'SecondMenuLevel'
+					},
+					{
+						text: 'action3',
+						hrefLink:'https://ru.wikipedia.org',
+						linkClass: 'ThirdMenuLevel',
+						parentClass:'SecondMenuLevel'
+					}
+				]
+			},
+			{
+				text: 'Second subsubmenu',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			}
+		]
+	},
+	{
+		text: 'Submenu2',
+		hrefLink:'#',
+		linkClass: 'firstMenuLevel',
+		parentClass:'mainMenu',
+		childrenItems:[
+			{
+				text: 'action111',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			},
+			{
+				text: 'action112',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			},
+			{
+				text: 'action112',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			}
+		]
+	}
+]
+
+
+const createMenu = function (arr){
+
+	const headerBlock = $('<header>');
+
+	const navigationBlock = $('<nav>');
+
+	const additionalBlock = $('<div>');
+
+	const textTitle = $('<p>');
+	
+	$("body").prepend(headerBlock);
+	$("header").prepend(navigationBlock);
+	$("nav").prepend(additionalBlock);
+	$("div").addClass("box");
+	let countLevels=0;
+
+	let parentClass='mainMenu';
+
+ 	const creatNavigationMenu = function(arr){
+
+ 		const menuTitle = $("<ul>");
+
+ 			if (countLevels===0) {
+ 				$(".box").prepend ( menuTitle ) ;
+ 				menuTitle.addClass ( "mainMenu" ) ;
+ 				$("ul").prepend ( textTitle ) ;
+ 				$("p").text ( "Dropdown link" ) ;
+
+ 			} else {
+ 				const submenuClass="subMenuList"+countLevels
+ 				menuTitle.addClass(submenuClass);
+ 				const forSearchParent='.'+ parentClass;
+ 				$(menuTitle).appendTo(forSearchParent);
+ 	
+ 			}
+		arr.forEach (function(item, index, arr) {
+
+				const menuItem = $("<li>");
+				const forSearch='.'+parentClass; 
+				menuItem.addClass(item.linkClass).addClass(item.linkClass + index);
+				$(menuTitle).append(menuItem);
+
+				const menuItemLink = $("<a>");
+				const itemClass='.'+ (item.linkClass+index)
+				$(menuItemLink).appendTo(itemClass);
+				$(menuItemLink).attr('href', item.hrefLink);
+				$(menuItemLink).text(item.text);
+			
+				if (item.hasOwnProperty('childrenItems')) {
+
+					$(menuItemLink).addClass('dropdownList');
+
+					countLevels+=1;
+
+					parentClass = item.linkClass+index;
+
+				    return creatNavigationMenu(item.childrenItems);
+				}
+		})
+	}
+	creatNavigationMenu(arr);
+
+}
+
+createMenu(menuComponents);
+
+const clickOnDropdown = $ ("a.dropdownList");
+		for (const everyClickOnDropdown of clickOnDropdown) {
+			$(everyClickOnDropdown).click(function(event){
+				const activated = $('ul.active');
+					for (const activatedItem of activated ){
+						if (!activatedItem.contains(this)){
+							$(activatedItem).removeClass('active');
+						}
+					}
+				$(this).next().addClass('active');		
+				})
+				
+				};
+			
+	const clickOnLink = $("a");
+		for (const clickedLink of clickOnLink) {
+			
+			if (!clickedLink.classList.contains('dropdownList')){
+					$(clickedLink).click(function(item) {
+						item.preventDefault();
+						if (confirm('Вы уверены, что хотите покинуть страницу?')){
+						window.location.href=$(this).attr('href');
+						}
+				})
+			}	
+		}
+
+</script>
+</body>
+</html>
